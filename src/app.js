@@ -2,8 +2,15 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const port = process.env.PORT || 3000;
+const { connectDB } = require('./config/db');
+const authRoutes = require('./routes/authRoutes');
 
 app.use(express.json());
+
+// Kết nối tới MongoDB
+connectDB();
+
+app.use('/api/auth', authRoutes);
 
 
 app.get('/', (req, res) => {
