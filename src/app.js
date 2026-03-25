@@ -3,6 +3,9 @@ const app = express();
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
+
+
 app.get('/', (req, res) => {
   res.send('Hello Mentor, Server Blog API is running!');
 });
