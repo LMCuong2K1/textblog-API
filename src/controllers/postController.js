@@ -1,6 +1,5 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
-const Comment = require('../models/Comment');
 
 const postController = {
     createPost: async (req, res) => {
@@ -13,7 +12,6 @@ const postController = {
                 tags: tags,
                 author: userId
             });
-            newPost.save();
             res.status(201).json(newPost);
         } catch (error) {
             res.status(500).json({
