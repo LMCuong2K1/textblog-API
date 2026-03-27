@@ -44,7 +44,12 @@ const postController = {
                 .limit(actualLimit)
                 .sort(sort)
                 .exec();
-            res.status(200).json(posts);
+            res.status(200).json({
+                posts: posts,
+                page: page,
+                limit: actualLimit,
+                total: await Post.countDocuments(filter)
+            });
         } catch (error) {
             res.status(500).json({
                 error: error.message
@@ -69,19 +74,25 @@ const postController = {
         }
     },
     updatePost:async(req,res)=>{
-        const postId = req.params.id;
-        const {title,content,tags} = req.body;
         try{
-            const post = await Post.findByIdAndUpdate(postId,{
+        const postId = req.params.id;
+        let post = await Post.findById(postId);
+        if(!post){
+            return res.status(404).json({
+                error:'Post not found'
+            });
+        };
+        if(post.author.toString() !== req.user.userId && req.user.userRole !== 'admin'){
+            return res.status(403).json({
+                error:'You are not authorized to update this post'
+            });
+        }
+        const {title,content,tags} = req.body;
+            post = await Post.findByIdAndUpdate(postId,{
                 title:title,
                 content:content,
                 tags:tags
             },{new:true});
-            if(!post){
-                return res.status(404).json({
-                    error:'Post not found'
-                });
-                }
             res.status(200).json(post);
         }
         catch(error){
@@ -89,6 +100,31 @@ const postController = {
                 error:error.message
             });
         }
+    },
+    deletePost:async(req,res)=>{
+        try{
+        const postId = req.params.id;
+        const post = await Post.findById(postId);
+        if(!post){
+            return res.status(404).json({
+                error:'Post not found'
+            });
+        };
+        if(post.author.toString() !== req.user.userId){
+            return res.status(403).json({
+                error:'You are not authorized to delete this post'
+            });
+        }
+        await Post.findByIdAndDelete(postId);
+        res.status(200).json({
+            message:'Post deleted successfully'
+        });
+        }
+        catch(error){
+        res.status(500).json({
+            error:error.message
+        });
+    }
     }
 }
 
