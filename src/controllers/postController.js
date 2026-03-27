@@ -67,6 +67,28 @@ const postController = {
                 error: error.message
             });
         }
+    },
+    updatePost:async(req,res)=>{
+        const postId = req.params.id;
+        const {title,content,tags} = req.body;
+        try{
+            const post = await Post.findByIdAndUpdate(postId,{
+                title:title,
+                content:content,
+                tags:tags
+            },{new:true});
+            if(!post){
+                return res.status(404).json({
+                    error:'Post not found'
+                });
+                }
+            res.status(200).json(post);
+        }
+        catch(error){
+            res.status(500).json({
+                error:error.message
+            });
+        }
     }
 }
 
