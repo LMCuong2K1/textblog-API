@@ -8,6 +8,7 @@ const postRoutes = require('./routes/postRoutes');
 
 app.use(express.json());
 
+app.use('/uploads', express.static('public/uploads'));
 // Kết nối tới MongoDB
 connectDB();
 

@@ -4,13 +4,15 @@ const aqp = require('api-query-params').default;
 const postController = {
     createPost: async (req, res) => {
         const { title, content, tags } = req.body;
+        const imageUrl = req.file ? '/uploads/' + req.file.filename : null;
         const userId = req.user.userId;
         try {
             const newPost = await Post.create({
                 title: title,
                 content: content,
                 tags: tags,
-                author: userId
+                author: userId,
+                imageUrl: imageUrl
             });
             res.status(201).json(newPost);
         } catch (error) {
@@ -82,7 +84,7 @@ const postController = {
                 error:'Post not found'
             });
         };
-        if(post.author.toString() !== req.user.userId && req.user.userRole !== 'admin'){
+        if(post.author.toString() !== req.user.userId ){
             return res.status(403).json({
                 error:'You are not authorized to update this post'
             });
@@ -110,7 +112,7 @@ const postController = {
                 error:'Post not found'
             });
         };
-        if(post.author.toString() !== req.user.userId){
+        if(post.author.toString() !== req.user.userId && req.user.userRole !== 'admin'){
             return res.status(403).json({
                 error:'You are not authorized to delete this post'
             });
