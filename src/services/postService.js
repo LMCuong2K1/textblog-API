@@ -1,10 +1,11 @@
 const Post = require('../models/Post');
 const aqp = require('api-query-params').default;
+const { cloudinary } = require('../config/cloudinaryConfig');
 
 const postService = {
     createPost: async (postData, userId, file) => {
         const { title, content, tags } = postData;
-        const imageUrl = file ? '/uploads/' + file.filename : null;
+        const imageUrl = file ? file.path : null;
 
         const newPost = await Post.create({
             title,
@@ -75,7 +76,14 @@ const postService = {
         const updateData = { ...postData };
 
         if (file) {
-            updateData.imageUrl = '/uploads/' + file.filename;
+            // Nếu bài viết đã có ảnh cũ, xóa nó khỏi Cloudinary trước khi cập nhật ảnh mới
+            if (post.imageUrl) {
+                // Tách public_id từ URL của ảnh cũ để xóa
+                const publicId = post.imageUrl.split('/').pop().split('.')[0];
+                await cloudinary.uploader.destroy(`textblog/${publicId}`);
+            }
+            // Cập nhật URL ảnh mới từ Cloudinary
+            updateData.imageUrl = file.path;
         }
 
         const updatedPost = await Post.findByIdAndUpdate(
@@ -98,6 +106,12 @@ const postService = {
             const error = new Error('Bạn không có quyền xóa bài viết này');
             error.statusCode = 403;
             throw error;
+        }
+
+        // Nếu bài viết có ảnh, xóa nó khỏi Cloudinary trước khi xóa bài viết
+        if (post.imageUrl) {
+            const publicId = post.imageUrl.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(`textblog/${publicId}`);
         }
 
         await Post.findByIdAndDelete(postId);
