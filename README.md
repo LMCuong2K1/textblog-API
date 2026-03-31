@@ -38,7 +38,7 @@ Dự án được thực hiện nhằm đáp ứng yêu cầu của bài tập l
 
 1.  **Clone repository:**
     ```bash
-    git clone <your-repo-link>
+    git clone https://github.com/LMCuong2K1/textblog-API.git
     cd textblog-api
     ```
 
