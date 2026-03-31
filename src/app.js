@@ -21,13 +21,15 @@ app.get('/', (req, res) => {
   res.send('Hello Mentor, Server Blog API is running!');
 });
 
-app.use((err,req,res,next)=>{
-    console.log(err.stack);
-    res.status(500).json({
-      error:"Lỗi Server nội bộ!"
-    });
-  }
-);
+app.use((err, req, res, next) => {
+  console.error(err.stack); // Log error stack to stderr for better practice
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Lỗi Server nội bộ!';
+
+  res.status(statusCode).json({
+    error: message
+  });
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

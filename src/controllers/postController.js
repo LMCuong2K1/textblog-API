@@ -30,7 +30,7 @@ const postController = {
 
     updatePost: async (req, res) => {
         try {
-            const updatedPost = await postService.updatePost(req.params.id, req.body, req.user.userId);
+            const updatedPost = await postService.updatePost(req.params.id, req.body, req.user.userId, req.user.userRole);
             res.status(200).json(updatedPost);
         } catch (error) {
             res.status(error.statusCode || 500).json({ error: error.message });

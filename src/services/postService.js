@@ -58,7 +58,7 @@ const postService = {
         return post;
     },
 
-    updatePost: async (postId, postData, userId) => {
+    updatePost: async (postId, postData, userId, userRole) => {
         let post = await Post.findById(postId);
         if (!post) {
             const error = new Error('Không tìm thấy bài viết');
@@ -66,7 +66,7 @@ const postService = {
             throw error;
         }
 
-        if (post.author.toString() !== userId) {
+        if (post.author.toString() !== userId && userRole !== 'admin') {
             const error = new Error('Bạn không có quyền cập nhật bài viết này');
             error.statusCode = 403;
             throw error;
