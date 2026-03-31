@@ -58,7 +58,8 @@ const postService = {
         return post;
     },
 
-    updatePost: async (postId, postData, userId, userRole) => {
+    updatePost: async (postId, postData, userId, userRole, file) => {
+        let post = await Post.findById(postId);
         if (!post) {
             const error = new Error('Không tìm thấy bài viết');
             error.statusCode = 404;
@@ -71,7 +72,17 @@ const postService = {
             throw error;
         }
 
-        const { title, content, tags } = postData;
+        const updateData = { ...postData };
+
+        if (file) {
+            updateData.imageUrl = '/uploads/' + file.filename;
+        }
+
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            updateData,
+            { new: true });
+
         return updatedPost;
     },
 
