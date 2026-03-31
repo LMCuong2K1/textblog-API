@@ -8,6 +8,6 @@ postRoutes.post('/', authMiddleware, upload.single('image'),postController.creat
 postRoutes.get('/', postController.getAllPosts);
 postRoutes.get('/my-posts', authMiddleware, postController.getMyPosts);
 postRoutes.get('/:id', postController.getPostById);
-postRoutes.put('/:id', authMiddleware, postController.updatePost);
+postRoutes.put('/:id', authMiddleware,upload.single('image'), postController.updatePost);
 postRoutes.delete('/:id', authMiddleware, postController.deletePost)
 module.exports = postRoutes;

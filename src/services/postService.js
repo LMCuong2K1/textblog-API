@@ -59,7 +59,6 @@ const postService = {
     },
 
     updatePost: async (postId, postData, userId, userRole) => {
-        let post = await Post.findById(postId);
         if (!post) {
             const error = new Error('Không tìm thấy bài viết');
             error.statusCode = 404;
@@ -73,12 +72,6 @@ const postService = {
         }
 
         const { title, content, tags } = postData;
-        const updatedPost = await Post.findByIdAndUpdate(postId, {
-            title,
-            content,
-            tags
-        }, { new: true });
-
         return updatedPost;
     },
 
